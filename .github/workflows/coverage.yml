@@ -23,21 +23,32 @@ jobs:
       - name: Restore
         run: dotnet restore
 
-      - name: Test with Coverage
+      - name: Test Calculator with Coverage
         run: |
-          dotnet test \
+          dotnet test tests/Calculator.Tests/Calculator.Tests.csproj \
             --collect:"XPlat Code Coverage" \
-            --results-directory TestResults
+            --results-directory TestResults/Calculator
+
+      - name: Test Greeter with Coverage
+        run: |
+          dotnet test tests/Greeter.Tests/Greeter.Tests.csproj \
+            --collect:"XPlat Code Coverage" \
+            --results-directory TestResults/Greeter
 
       - name: Install ReportGenerator
         run: |
           dotnet tool install -g dotnet-reportgenerator-globaltool
 
-      - name: Generate Badge
+      - name: Generate Badges
         run: |
           reportgenerator \
-            -reports:"TestResults/**/coverage.cobertura.xml" \
-            -targetdir:"coverage" \
+            -reports:"TestResults/Calculator/**/coverage.cobertura.xml" \
+            -targetdir:"coverage/calculator" \
+            -reporttypes:"Badges"
+
+          reportgenerator \
+            -reports:"TestResults/Greeter/**/coverage.cobertura.xml" \
+            -targetdir:"coverage/greeter" \
             -reporttypes:"Badges"
 
       - name: Commit Badge
@@ -47,6 +58,6 @@ jobs:
 
           git add coverage/
 
-          git diff --cached --quiet || git commit -m "Update coverage badge"
+          git diff --cached --quiet || git commit -m "Update coverage badges"
 
           git push
