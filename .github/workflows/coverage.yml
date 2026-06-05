@@ -59,5 +59,4 @@ jobs:
           git add coverage/
 
           git diff --cached --quiet || git commit -m "Update coverage badges"
-
           git push
